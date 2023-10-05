@@ -13,7 +13,24 @@ if (${settings.storage_backup:true}) {
     diskLimit: 20
   });
 }
-
-
-
+ 
+  resp.nodes.push({
+    nodeType: "ubuntu-vps",
+  tag: ${settings.ubuntu_version},
+  skipNodeEmails: true,
+  fixedCloudlets: 1,
+  cloudlets: 4,
+  nodeGroup: "cp",
+    env: [
+      "JELASTIC_PORTS: 3050, 21"
+    ],
+    volumes: [
+      "/opt/firebird/",
+      "/opt/firebird/logs/",
+      "/opt/firebird/data/",
+      "/backup/"
+    ]
+  });
+  
+  
 return resp;
