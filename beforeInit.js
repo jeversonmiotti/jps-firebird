@@ -8,4 +8,3 @@ if (${settings.storage_backup:true}) {
    diskLimit: 20
     }
   })
-}
