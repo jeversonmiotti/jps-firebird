@@ -1,3 +1,5 @@
+var resp = {
+    result: 0,
 if (${settings.storage_backup:true}) {
   resp.nodes.push({
    nodeType: "storage-backup",
@@ -8,5 +10,6 @@ if (${settings.storage_backup:true}) {
    diskLimit: 20,
     })
   }
-  
+}
+
 return resp;
