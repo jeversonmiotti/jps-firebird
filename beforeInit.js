@@ -32,5 +32,4 @@ if (${settings.storage_backup:true}) {
     ]
   });
   
-  
-return resp;
+  return resp;
