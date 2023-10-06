@@ -52,8 +52,29 @@ if ('${settings.storagebackup:false}'== 'true') {
       "/backup/"
     ]
   })
-}}
-else {
+}
+}
+else {//no storage
+  if ('${settings.ippublic:false}'== 'true') {
+    resp.nodes.push({
+    nodeType: "ubuntu-vps",
+    tag: ${settings.ubuntu_version},  
+    fixedCloudlets: 1,
+    cloudlets: 4,
+    nodeGroup: "cp",
+    extip: true,
+    isSLBAccessEnabled: false,
+      env: {
+        JELASTIC_PORTS: "3050, 21"      
+      },      
+      volumes: [
+        "/opt/firebird",
+        "/opt/firebird/logs",
+        "/opt/firebird/data",
+        "/backup/"
+      ]
+    })
+  } else {
     resp.nodes.push({
     nodeType: "ubuntu-vps",
     tag: ${settings.ubuntu_version},  
@@ -70,6 +91,7 @@ else {
         "/backup/"
       ]
     })
+  }
 }
   
 return resp;
