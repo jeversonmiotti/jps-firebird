@@ -1,0 +1,242 @@
+---
+jpsType: install
+jpsVersion: '1.5'
+appVersion: latest
+id: firebird
+name: Firebird Database
+categories:
+    - apps/popular
+    - apps/db-tools
+    - apps/dev-and-admin-tools
+logo: https://firebirdsql.org/file/about/firebird-logo-90.png
+homepage: https://firebirdsql.org/en/start/
+description:
+  text: {
+      en: "Firebird is an open source database developed from InterBase 6 that supports more than 10 operating systems, making it an excellent choice for storing data.",
+      pt: "O Firebird é um banco de dados de código aberto desenvolvido a partir do InterBase 6, compatível com mais de 10 sistemas operacionais, se trata de uma excelente opção para o armazenamento de dados.",
+      es: "Firebird es una base de datos de código abierto desarrollada desde InterBase 6 que admite más de 10 sistemas operativos, lo que la convierte en una excelente opción para almacenar datos.",
+  }
+  short: {
+      en: "Install a server with Firebird database in a few clicks.",
+      pt: "Instale um servidor com banco de dados Firebird em poucos cliques.",
+      es: "Instale un servidor con la base de datos Firebird en unos pocos clics.",
+  }
+
+settings:
+  fields:
+    - type: list
+      defaultMargins: 0 10 0 0
+      name: firebird_version
+      values:
+          https://jps.saveincloud.com/marketplace-jelastic/firebird/firebird_2_0/firebird.tar.gz: Firebird 2.0.7
+          https://jps.saveincloud.com/marketplace-jelastic/firebird/firebird_2_1/firebird.tar.gz: Firebird 2.1.7
+          https://jps.saveincloud.com/marketplace-jelastic/firebird/firebird_2_5/firebird.tar.gz: Firebird 2.5.9
+          https://jps.saveincloud.com/marketplace-jelastic/firebird/firebird_3_0_7/firebird.tar.gz: Firebird 3.0.7
+          https://jps.saveincloud.com/marketplace-jelastic/firebird/firebird_4_0/firebird.tar.gz: Firebird 4.0.1
+          https://jps.saveincloud.com/marketplace-jelastic/firebird/firebird_5_0/firebird.tar.gz: Firebird 5.0.0.973-Beta1 (NÃO RECOMENDADO EM PRODUÇÃO)
+
+      caption: {
+            en: "Firebird version",
+            pt: "Versão do Firebird",
+            es: "Versión de Firebird",
+        }
+      default: https://jps.saveincloud.com/marketplace-jelastic/firebird/firebird_2_5/firebird.tar.gz
+      required: true
+      
+  
+    - type: list
+      name: ubuntu_version
+      defaultMargins: 0 10 0 0
+      width: 155
+      values:
+          18.04: Ubuntu 18.04
+          20.04: Ubuntu 20.04
+          22.04: Ubuntu 22.04
+      caption: {
+            en: "Ubuntu version",
+            pt: "Versão do Ubuntu",
+            es: "Versión de Ubuntu",
+        }
+      default: 22.04
+      required: true
+      
+    - type: compositefield
+      caption: Storage Backup
+      pack: start
+      items:
+      - type: checkbox
+        name: storagebackup
+        defaultMargins: 0 10 0 0
+        width: 155
+        value: false
+        disabled: false
+        caption: {
+              en: "Storage Backup",
+              pt: "Storage Backup",
+              es: "Storage Backup",
+          }
+        tooltip: Será provisionada uma instância destinada ao armazenamento dos backups dos bancos de dados, caracterizada por um custo de armazenamento diferenciado. Para esclarecimentos adicionais, favor entrar em contato conosco. <a href='https://saveincloud.com/pt/blog/banco-de-dados/como-configurar-dos-bancos-de-dados-firebird/' target='_blank'>Como configurar backup dos bancos de dados Firebird</a> 
+        default: false
+
+    - type: compositefield
+      caption: IP Público
+      pack: start
+      items:
+      - type: checkbox
+        name: ippublic
+        defaultMargins: 0 10 0 0
+        width: 155
+        value: false
+        disabled: false
+        caption: {
+              en: "Public IP",
+              pt: "IP Público",
+              es: "IP Público",
+          }
+        tooltip: O ambiente será configurado com um endereço <strong>IP público</strong>, visando otimizar a capacidade de consulta e desempenho do seu banco de dados. Para estabelecer uma conexão, utilize a porta <strong>3050</strong> para o Firebird e a porta <strong>21</strong> para o FTP.
+        default: false    
+        
+  
+onBeforeInstall: https://raw.githubusercontent.com/jeversonmiotti/jps-firebird/main/beforeInit.js?_r=${fn.random}
+
+skipNodeEmails: true
+nodes: definedInOnBeforeInstall
+
+   
+ 
+  
+globals:
+    DB_PASS: ${fn.password(20)}
+    USER_FTP: ftp-user
+    PASS_FTP: ${fn.password(20)}
+    
+
+    
+
+         
+onInstall:
+  - if ('${settings.storagebackup:false}' == 'true'): storageMount
+  - environment.control.AddEndpoint [${nodes.cp[0].id}]:
+    - privatePort: 3050
+      protocol: TCP
+      name: FIREBIRD
+  - environment.control.AddEndpoint [${nodes.cp[0].id}]:
+    - privatePort: 21
+      protocol: TCP
+      name: FTP
+  - installFIREBIRD:
+  - installFTP:
+  - if (/3_0/.test("${settings.firebird_version}")):
+      configFIREBIRD3:
+  - if (/4_0/.test("${settings.firebird_version}")):
+      configFIREBIRD4:
+  - if (/5_0/.test("${settings.firebird_version}")):
+      configFIREBIRD5:
+actions:
+  storageMount:
+    - log: Mount Storage
+    - api:
+      - method: jelastic.environment.file.AddMountPointByGroup
+        params:
+          nodeGroup: cp
+          sourceNodeId: ${nodes.storage.master.id}
+          sourcePath: /data
+          path: /backup
+          sourceAddressType: NODE_GROUP
+          protocol: NFS4 
+          
+  installFIREBIRD:
+    - cmd[cp]: |-
+        timedatectl set-timezone America/Sao_Paulo
+        sudo echo "vm.max_map_count=256000
+        # uncomment this line to create raw dumps
+        # kernel.core_pattern=/opt/firebird/data/core.%e.%t.%p
+        # By default use lz4 to compress dumps
+        # kernel.core_pattern=|/usr/bin/lz4 -1q - /opt/firebird/data/core.%e.%t.%p" >> /etc/sysctl.conf
+        sudo sysctl -p
+        apt -y update
+        apt -y install libtommath-dev
+        apt -y install libstdc++5
+        apt -y install libncurses5 
+        apt -y install libtomcrypt-dev
+        wget '${settings.firebird_version}'
+        tar -xpzvf firebird.tar.gz
+        cd firebird
+        sudo ln -sf /usr/lib/x86_64-linux-gnu/libtommath.so.1 /usr/lib/x86_64-linux-gnu/libtommath.so.0
+        yes '${globals.DB_PASS}' | ./install.sh
+        cd /opt/firebird
+        mkdir data
+        cd /
+        mkdir /backup/
+        mkdir /opt/firebird/data/log/
+        touch /opt/firebird/data/log/backup_firebird.log
+        cd /root
+        wget https://jps.saveincloud.com/marketplace-jelastic/firebird/backup_firebird.sh
+        chmod 755 backup_firebird.sh        
+        (crontab -l; echo "* * * * * chmod -R 770 /opt/firebird/data/") | crontab -
+        (crontab -l; echo "#0 1 * * * /root/backup_firebird.sh USUARIO SENHA BANCO DIAS") | crontab -
+    
+  installFTP:
+      - cmd[cp]: |-
+          apt install -y vsftpd
+          systemctl restart vsftpd
+          systemctl enable vsftpd
+          useradd ${globals.USER_FTP}
+          yes '${globals.PASS_FTP}' | passwd ${globals.USER_FTP}
+          sed -i 's/anonymous_enable=YES/anonymous_enable=NO/g' /etc/vsftpd.conf
+          sed -i 's/pam_service_name=vsftpd/pam_service_name=ftp/g' /etc/vsftpd.conf
+          sudo echo "write_enable=yes" >> /etc/vsftpd.conf
+          usermod -d /opt/firebird/data ${globals.USER_FTP}
+          systemctl restart vsftpd
+          chmod -R 770 /opt/firebird/data
+          chown -R firebird:firebird /opt/firebird/data
+          usermod -a -G firebird ${globals.USER_FTP}
+          chmod -R g+wsr /opt/firebird/data
+  
+  configFIREBIRD3:
+    - cmd[cp]: |-
+        sed -i 's/mesg n || true/ /g' /root/.profile
+        echo "tty -s && mesg n" >> /root/.profile
+        cd /opt/firebird/
+        mv /opt/firebird/firebird.conf firebird_bk.conf
+        wget https://jps.saveincloud.com/marketplace-jelastic/firebird/firebird_3_0/firebird.conf
+        chown firebird:firebird firebird.conf
+        service firebird-superserver restart
+        /opt/firebird/bin/gsec -user SYSDBA -password masterkey -modify sysdba -pw ${globals.DB_PASS}
+        service firebird-superserver restart
+  
+  configFIREBIRD4:
+    - cmd[cp]: |-
+        sed -i 's/mesg n || true/ /g' /root/.profile
+        echo "tty -s && mesg n" >> /root/.profile
+        cd /opt/firebird/
+        mv /opt/firebird/firebird.conf firebird_bk.conf
+        wget https://jps.saveincloud.com/marketplace-jelastic/firebird/firebird_4_0/firebird.conf
+        chown firebird:firebird firebird.conf
+        service firebird restart
+        /opt/firebird/bin/gsec -user SYSDBA -password masterkey -modify sysdba -pw ${globals.DB_PASS}
+        service firebird restart
+  configFIREBIRD5:
+    - cmd[cp]: |-
+        sed -i 's/mesg n || true/ /g' /root/.profile
+        echo "tty -s && mesg n" >> /root/.profile
+        cd /opt/firebird/
+        mv /opt/firebird/firebird.conf firebird_bk.conf
+        wget https://jps.saveincloud.com/marketplace-jelastic/firebird/firebird_5_0/firebird.conf
+        chown firebird:firebird firebird.conf
+        service firebird restart
+        /opt/firebird/bin/gsec -user SYSDBA -password masterkey -modify sysdba -pw ${globals.DB_PASS}
+        service firebird restart
+
+success:
+    text: {
+        en: "https://jps.saveincloud.com/marketplace-jelastic/firebird/text/success_en.md",
+        pt: "https://jps.saveincloud.com/marketplace-jelastic/firebird/text/success_pt.md",
+        es: "https://jps.saveincloud.com/marketplace-jelastic/firebird/text/success_es.md"
+    }
+
+    email: {
+        en: "https://jps.saveincloud.com/marketplace-jelastic/firebird/text/success_en.md",    
+        pt: "https://jps.saveincloud.com/marketplace-jelastic/firebird/text/success_pt.md",
+        es: "https://jps.saveincloud.com/marketplace-jelastic/firebird/text/success_es.md"
+    }
