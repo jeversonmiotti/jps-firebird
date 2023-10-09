@@ -77,6 +77,10 @@ settings:
           }
         tooltip: Será provisionada uma instância destinada ao armazenamento dos backups dos bancos de dados, caracterizada por um custo de armazenamento diferenciado. Para esclarecimentos adicionais, favor entrar em contato conosco. <a href='https://saveincloud.com/pt/blog/banco-de-dados/como-configurar-dos-bancos-de-dados-firebird/' target='_blank'>Como configurar backup dos bancos de dados Firebird</a> 
         default: false
+    - caption: Advanced Features
+      type: displayfield
+      name: displayfield
+      markup:
 
     - type: compositefield
       caption: IP Público
@@ -86,7 +90,7 @@ settings:
         name: ippublic
         defaultMargins: 0 10 0 0
         width: 155
-        value: false
+        value: true
         disabled: false
         caption: {
               en: "Public IP",
@@ -94,9 +98,16 @@ settings:
               es: "IP Público",
           }
         tooltip: O ambiente será configurado com um endereço <strong>IP público</strong>, visando otimizar a capacidade de consulta e desempenho do seu banco de dados. Para estabelecer uma conexão, utilize a porta <strong>3050</strong> para o Firebird e a porta <strong>21</strong> para o FTP.
-        default: false    
+        default: false 
+   
+    - type: displayfield
+      hideLabel: true
+      hidden: true
+      name: bl_count
+      value: 2
+      markup:           
         
-  
+onBeforeInit: https://raw.githubusercontent.com/jeversonmiotti/jps-firebird/main/beforeInit.js?_r=${fn.random}
 onBeforeInstall: https://raw.githubusercontent.com/jeversonmiotti/jps-firebird/main/beforeInstall.js?_r=${fn.random}
 
 skipNodeEmails: true
