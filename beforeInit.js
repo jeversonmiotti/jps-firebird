@@ -30,7 +30,6 @@ var group = jelastic.billing.account.GetAccount(appid, session);
 
 
 if (!prod || group.groupType == 'trial') {
-  fields["ippublic"].disabled = true;
   fields["ippublic"].value = false;
   fields["ippublic"].hidden = true;
   fields["displayfield"].markup = "Advanced features are not available.";
