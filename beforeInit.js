@@ -27,7 +27,23 @@ for (var i = 0, field; field = jps.settings.fields[i]; i++)
 
 var quotas = jelastic.billing.account.GetQuotas(perEnv + ";"+maxEnvs+";" + perNodeGroup + ";" + maxCloudletsPerRec ).array;
 var group = jelastic.billing.account.GetAccount(appid, session);
+for (var i = 0; i < quotas.length; i++){
+  var q = quotas[i], n = toNative(q.quota.name);
 
+  if (n == maxCloudletsPerRec && maxCloudlets > q.value){
+      err(q, "required", maxCloudlets, true);
+      prod  = false; 
+  }
+  
+  if (n == perEnv && nodesPerEnvMin > q.value){
+      if (!markup) err(q, "required", nodesPerEnvMin, true);
+      prod = false;
+  }
+
+ if (n == perNodeGroup && nodesPerGroupMin > q.value){
+      if (!markup) err(q, "required", nodesPerGroupMin, true);
+      prod = false;
+  }
 
 
 if (!prod || group.groupType == 'trial') {
