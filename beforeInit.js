@@ -27,102 +27,12 @@ for (var i = 0, field; field = jps.settings.fields[i]; i++)
 
 var quotas = jelastic.billing.account.GetQuotas(perEnv + ";"+maxEnvs+";" + perNodeGroup + ";" + maxCloudletsPerRec ).array;
 var group = jelastic.billing.account.GetAccount(appid, session);
-for (var i = 0; i < quotas.length; i++){
-    var q = quotas[i], n = toNative(q.quota.name);
 
-    if (n == maxCloudletsPerRec && maxCloudlets > q.value){
-        err(q, "required", maxCloudlets, true);
-        prod  = false; 
-    }
-    
-    if (n == perEnv && nodesPerEnvMin > q.value){
-        if (!markup) err(q, "required", nodesPerEnvMin, true);
-        prod = false;
-    }
-
-   if (n == perNodeGroup && nodesPerGroupMin > q.value){
-        if (!markup) err(q, "required", nodesPerGroupMin, true);
-        prod = false;
-    }
-    
-    if (n == perEnv && nodesPerEnvMin  == q.value){
-      fields["glusterfs"].value = false;
-      fields["glusterfs"].disabled = true;
-      fields["galera"].value = false;
-      fields["galera"].disabled = true;
-      fields["bl_count"].value = 1;
-      fields["displayfield"].markup = "Some advanced features are not available. Please upgrade your account.";
-      fields["displayfield"].cls = "warning";
-      fields["displayfield"].hideLabel = true;
-      fields["displayfield"].height = 25;      
-    }
-
-    if (n == perEnv && nodesPerEnvWO_GlusterFS  == q.value){
-      fields["glusterfs"].value = false;
-      fields["glusterfs"].disabled = true;
-      fields["bl_count"].value = 1;
-      fields["displayfield"].markup = "Some advanced features are not available. Please upgrade your account.";
-      fields["displayfield"].cls = "warning";
-      fields["displayfield"].hideLabel = true;
-      fields["displayfield"].height = 25;      
-    }
-
-    if (n == perEnv && q.value == 8){
-      fields["glusterfs"].value = false;
-      fields["glusterfs"].disabled = true;
-      fields["bl_count"].value = 2;
-      fields["displayfield"].markup = "Some advanced features are not available. Please upgrade your account.";
-      fields["displayfield"].cls = "warning";
-      fields["displayfield"].hideLabel = true;
-      fields["displayfield"].height = 25;
-    }
-    
-    if (n == perEnv && nodesPerEnvWO_Bl  == q.value){
-      fields["bl_count"].value = 1;      
-    }    
- 
-    if (n == perNodeGroup && nodesPerGroupMin  == q.value){
-      fields["glusterfs"].value = false;
-      fields["glusterfs"].disabled = true;
-      fields["galera"].value = false;
-      fields["galera"].disabled = true;
-      fields["displayfield"].markup = "Some advanced features are not available. Please upgrade your account.";
-      fields["displayfield"].cls = "warning";
-      fields["displayfield"].hideLabel = true;
-      fields["displayfield"].height = 25;
-    }
-
-    if (isLS.result == 0 || isLS.result == Response.PERMISSION_DENIED) {  
-      fields["ippublic"].hidden = false;
-      fields["ippublic"].value = true;
-    } else {
-      fields["ippublic"].hidden = true;
-      fields["ippublic"].value = false;
-      fields["ippublic"].showIf = null;
-    }
-  
-    if (isCDN.result == 0 || isCDN.result == Response.PERMISSION_DENIED) {
-      fields["cdn-addon"].hidden = false;
-      fields["cdn-addon"].value = true;
-    } else {
-      fields["cdn-addon"].hidden = true;
-      fields["cdn-addon"].value = false;
-    }
-}
 
 if (!prod || group.groupType == 'trial') {
   fields["ippublic"].disabled = true;
   fields["ippublic"].value = false;
-  fields["loadGrowth"].disabled = true;
-  fields["galera"].disabled = true;
-  fields["galera"].value = false;
-  fields["glusterfs"].disabled = true;
-  fields["glusterfs"].value = false;
-  fields["le-addon"].disabled = true;
-  fields["le-addon"].value = false;
-  fields["cdn-addon"].disabled = true;
-  fields["cdn-addon"].value = false;
-  fields["mu-addon"].disabled = true;
+  fields["ippublic"].hidden = true;
   fields["displayfield"].markup = "Advanced features are not available.";
   fields["displayfield"].cls = "warning";
   fields["displayfield"].hideLabel = true;
