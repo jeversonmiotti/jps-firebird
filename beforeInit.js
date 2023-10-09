@@ -50,7 +50,7 @@ if (!prod || group.groupType == 'trial') {
   fields["ippublic"].disabled = true;
   fields["ippublic"].value = false;
 
-  fields["displayfield"].markup = "Advanced features are not available.";
+  fields["displayfield"].markup = "IP Público Não está disponível para sua conta. Atualize sua conta para obter mais recursos.";
   fields["displayfield"].cls = "warning";
   fields["displayfield"].hideLabel = true;
   fields["displayfield"].height = 25;
