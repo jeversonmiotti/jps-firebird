@@ -44,7 +44,7 @@ for (var i = 0; i < quotas.length; i++){
       if (!markup) err(q, "required", nodesPerGroupMin, true);
       prod = false;
   }
-
+}
 
 if (!prod || group.groupType == 'trial') {
   fields["ippublic"].disabled = true;
