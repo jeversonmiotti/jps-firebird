@@ -27,7 +27,7 @@ var fields = {};
 for (var i = 0, field; field = jps.settings.fields[i]; i++)
   fields[field.name] = field;
 
-var quotas = jelastic.billing.account.GetQuotas(perEnv + ";"+ maxEnvs + ";" + perNodeGroup + ";" + maxCloudletsPerRec + ";" + VDSEnabled).array;
+var quotas = jelastic.billing.account.GetQuotas(perEnv + ";"+ maxEnvs + ";" + perNodeGroup + ";" + maxCloudletsPerRec + ";" + VDSEnabled + ";" + ExternalIP).array;
 var group = jelastic.billing.account.GetAccount(appid, session);
 for (var i = 0; i < quotas.length; i++){
   var q = quotas[i], n = toNative(q.quota.name);
@@ -47,7 +47,7 @@ for (var i = 0; i < quotas.length; i++){
       prod = false;
   }
 }
-if (quotas.VDSEnabled  == false){
+if (quotas.VDSEnabled == false){
   fields["firebird_version"].value = false;
   fields["firebird_version"].disabled = true;
   fields["displayfield"].markup = "Some advanced features are not available. Please upgrade your account.";
@@ -60,7 +60,7 @@ if (quotas.VDSEnabled  == false){
   );
 }
 
-if (!prod || group.groupType == 'trial') {
+if (!prod || quotas.ExternalIP <= '0') {
   fields["ippublic"].disabled = true;
   fields["ippublic"].value = false;
 
