@@ -32,7 +32,20 @@ var group = jelastic.billing.account.GetAccount(appid, session);
 for (var i = 0; i < quotas.length; i++){
   var q = quotas[i], n = toNative(q.quota.name);
 
- 
+  if (n == maxCloudletsPerRec && maxCloudlets > q.value){
+      err(q, "required", maxCloudlets, true);
+      prod  = false; 
+  }
+  
+  if (n == perEnv && nodesPerEnvMin > q.value){
+      if (!markup) err(q, "required", nodesPerEnvMin, true);
+      prod = false;
+  }
+
+ if (n == perNodeGroup && nodesPerGroupMin > q.value){
+      if (!markup) err(q, "required", nodesPerGroupMin, true);
+      prod = false;
+  }
 }
 if (quotas.VDSEnabled  == false){
   fields["firebird_version"].value = false;
@@ -41,6 +54,10 @@ if (quotas.VDSEnabled  == false){
   fields["displayfield"].cls = "warning";
   fields["displayfield"].hideLabel = true;
   fields["displayfield"].height = 25;
+
+  settings.fields.push(
+    {"type": "compositefield","height": 0,"hideLabel": true,"width": 0,"items": [{"height": 0,"type": "string","required": true}]}
+  );
 }
 
 if (!prod || group.groupType == 'trial') {
@@ -54,9 +71,7 @@ if (!prod || group.groupType == 'trial') {
 
   
   
-  settings.fields.push(
-    {"type": "compositefield","height": 0,"hideLabel": true,"width": 0,"items": [{"height": 0,"type": "string","required": true}]}
-  );
+  
 }
 
 return {
