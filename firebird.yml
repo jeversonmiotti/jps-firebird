@@ -97,7 +97,7 @@ settings:
         default: false    
         
   
-onBeforeInstall: https://raw.githubusercontent.com/jeversonmiotti/jps-firebird/main/beforeInit.js?_r=${fn.random}
+onBeforeInstall: https://raw.githubusercontent.com/jeversonmiotti/jps-firebird/main/beforeInstall.js?_r=${fn.random}
 
 skipNodeEmails: true
 nodes: definedInOnBeforeInstall
