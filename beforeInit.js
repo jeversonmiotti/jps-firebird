@@ -27,12 +27,12 @@ for (var i = 0, field; field = jps.settings.fields[i]; i++)
 
 var quotas = jelastic.billing.account.GetQuotas(perEnv + ";"+maxEnvs+";" + perNodeGroup + ";" + maxCloudletsPerRec ).array;
 var group = jelastic.billing.account.GetAccount(appid, session);
-
+console.log(fields);
 
 
 if (!prod || group.groupType == 'trial') {
-  //fields["ippublic"].disabled = true;
-  //fields["ippublic"].value = false;
+  fields["ippublic"].disabled = true;
+  fields["ippublic"].value = false;
 
   fields["displayfield"].markup = "Advanced features are not available.";
   fields["displayfield"].cls = "warning";
