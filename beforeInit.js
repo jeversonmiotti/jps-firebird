@@ -25,24 +25,59 @@ var fields = {};
 for (var i = 0, field; field = jps.settings.fields[i]; i++)
   fields[field.name] = field;
 
-var quotas = jelastic.billing.account.GetQuotas(perEnv + ";"+maxEnvs+";" + perNodeGroup + ";" + maxCloudletsPerRec ).array;
-var group = jelastic.billing.account.GetAccount(appid, session);
+  var hasCollaboration = (parseInt('${fn.compareEngine(7.0)}', 10) >= 0),
+  quotas = [], group;
+
+if (hasCollaboration) {
+  quotas = [
+      { quota : { name: perEnv }, value: parseInt('${quota.environment.maxnodescount}', 10) },
+      { quota : { name: maxEnvs }, value: parseInt('${quota.environment.maxcount}', 10) },
+      { quota : { name: perNodeGroup }, value: parseInt('${quota.environment.maxsamenodescount}', 10) },
+      { quota : { name: maxCloudletsPerRec }, value: parseInt('${quota.environment.maxcloudletsperrec}', 10) },
+      { quota : { name: diskIOPSlimit }, value: parseInt('${quota.disk.iopslimit}', 10) }
+  ];
+  group = { groupType: '${account.groupType}' };
+} else {
+  quotas = jelastic.billing.account.GetQuotas(perEnv + ";"+maxEnvs+";" + perNodeGroup + ";" + maxCloudletsPerRec + ";" + diskIOPSlimit).array;
+  group = jelastic.billing.account.GetAccount(appid, session);
+}
 
 
-if (!prod || group.groupType == 'trial') {
-  fields["ippublic"].disabled = true;
-  fields["ippublic"].value = false;
+if (!prod && !dev || group.groupType == 'trial') {
+  for (var i = 0, n = f.length; i < n; i++)
+      if (f[i].type == "compositefield") {
+          for (var j = 0, l = f[i].items.length; j < l; j++)  f[i].items[j].disabled = true;
+      } else f[i].disabled = true;
 
-  fields["displayfield"].markup = "Advanced features are not available.";
-  fields["displayfield"].cls = "warning";
-  fields["displayfield"].hideLabel = true;
-  fields["displayfield"].height = 25;
+  f[2].hidden = false;
+  f[2].disabled = false;
+  f[2].markup =  "Production and Development topologies are not available. " + markup + "Please upgrade your account.";
+  if (group.groupType == 'trial')
+      f[2].markup = "Production and Development topologies are not available for " + group.groupType + " account. Please upgrade your account.";
+  f[2].height =  60;
+  f[4].value = false;
+  f[4]['default'] = false;
 
-  
-  
-  settings.fields.push(
-    {"type": "compositefield","height": 0,"hideLabel": true,"width": 0,"items": [{"height": 0,"type": "string","required": true}]}
-  );
+  f.push({
+      "type": "compositefield",
+      "height": 0,
+      "hideLabel": true,
+      "width": 0,
+      "items": [{
+          "height": 0,
+          "type": "string",
+          "required": true,
+      }]
+  });
+}
+
+if (hasCollaboration) {
+  f.push({
+      "type": "owner",
+      "name": "ownerUid",
+      "caption": "Owner"
+  });
+  f[9].dependsOn = "ownerUid";
 }
 
 return {
