@@ -56,7 +56,7 @@ if (quotas.VDSEnabled  == false){
   fields["displayfield"].height = 25;
 }
 
-if (!prod || quotas.ExternalIP > 1) {
+if (!prod || quotas.ExternalIP > 0) {
   fields["ippublic"].disabled = true;
   fields["ippublic"].value = false;
 
