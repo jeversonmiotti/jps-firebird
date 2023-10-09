@@ -46,7 +46,7 @@ for (var i = 0; i < quotas.length; i++){
       prod = false;
   }
 }
-if (quotas.VDSEnabled  == false){
+if (n == perEnv && nodesPerEnvMin  == q.value){
   fields["firebird_version"].value = false;
   fields["firebird_version"].disabled = true;
   fields["displayfield"].markup = "Some advanced features are not available. Please upgrade your account.";
