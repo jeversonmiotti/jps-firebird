@@ -29,32 +29,21 @@ var quotas = jelastic.billing.account.GetQuotas(perEnv + ";"+maxEnvs+";" + perNo
 var group = jelastic.billing.account.GetAccount(appid, session);
 
 
-if (!prod && !dev || group.groupType == 'trial') {
-  for (var i = 0, n = f.length; i < n; i++)
-      if (f[i].type == "compositefield") {
-          for (var j = 0, l = f[i].items.length; j < l; j++)  f[i].items[j].disabled = true;
-      } else f[i].disabled = true;
 
-  f[2].hidden = false;
-  f[2].disabled = false;
-  f[2].markup =  "Production and Development topologies are not available. " + markup + "Please upgrade your account.";
-  if (group.groupType == 'trial')
-      f[2].markup = "Production and Development topologies are not available for " + group.groupType + " account. Please upgrade your account.";
-  f[2].height =  60;
-  f[4].value = false;
-  f[4]['default'] = false;
+if (!prod || group.groupType == 'trial') {
+  //fields["ippublic"].disabled = true;
+  //fields["ippublic"].value = false;
 
-  f.push({
-      "type": "compositefield",
-      "height": 0,
-      "hideLabel": true,
-      "width": 0,
-      "items": [{
-          "height": 0,
-          "type": "string",
-          "required": true,
-      }]
-  });
+  fields["displayfield"].markup = "Advanced features are not available.";
+  fields["displayfield"].cls = "warning";
+  fields["displayfield"].hideLabel = true;
+  fields["displayfield"].height = 25;
+
+  
+  
+  settings.fields.push(
+    {"type": "compositefield","height": 0,"hideLabel": true,"width": 0,"items": [{"height": 0,"type": "string","required": true}]}
+  );
 }
 
 return {
