@@ -13,6 +13,7 @@ var perEnv = "environment.maxnodescount",
       maxEnvs = "environment.maxcount",
       perNodeGroup = "environment.maxsamenodescount",
       maxCloudletsPerRec = "environment.maxcloudletsperrec";
+      VDSEnabled = "environment.vds.enabled";
 var nodesPerEnvWO_Bl = 9,
       nodesPerEnvWO_GlusterFS = 7,
       nodesPerEnvMin = 6,
@@ -25,7 +26,7 @@ var fields = {};
 for (var i = 0, field; field = jps.settings.fields[i]; i++)
   fields[field.name] = field;
 
-var quotas = jelastic.billing.account.GetQuotas(perEnv + ";"+ maxEnvs + ";" + perNodeGroup + ";" + maxCloudletsPerRec + ";" + environment.vds.enabled).array;
+var quotas = jelastic.billing.account.GetQuotas(perEnv + ";"+ maxEnvs + ";" + perNodeGroup + ";" + maxCloudletsPerRec + ";" + VDSEnabled).array;
 var group = jelastic.billing.account.GetAccount(appid, session);
 for (var i = 0; i < quotas.length; i++){
   var q = quotas[i], n = toNative(q.quota.name);
@@ -45,7 +46,7 @@ for (var i = 0; i < quotas.length; i++){
       prod = false;
   }
 }
-if (quotas.environment.vds.enabled  == false){
+if (quotas.VDSEnabled  == false){
   fields["firebird_version"].value = false;
   fields["firebird_version"].disabled = true;
   fields["displayfield"].markup = "Some advanced features are not available. Please upgrade your account.";
