@@ -8,6 +8,23 @@ var group = jelastic.billing.account.GetAccount(appid, session);
 var isCDN = jelastic.dev.apps.GetApp(cdnAppid);
 var isLS = jelastic.dev.apps.GetApp(lsAppid);
 
+var perEnv = "environment.maxnodescount",
+maxEnvs = "environment.maxcount",
+perNodeGroup = "environment.maxsamenodescount",
+maxCloudletsPerRec = "environment.maxcloudletsperrec",
+diskIOPSlimit = "disk.iopslimit",
+envsCount = jelastic.env.control.GetEnvs({lazy: true}).infos.length,
+nodesPerProdEnv = 10,
+nodesPerProdEnvWOStorage = 7,
+nodesPerDevEnv = 3,
+nodesPerDevEnvWOStorage = 2,
+nodesPerCplaneNG = 3,
+nodesPerWorkerNG = 2,
+maxCloudlets = 16,
+iopsLimit = 1000,
+markup = "", cur = null, text = "used", prod = true, dev = true, prodStorage = true, devStorage = true, storage = false;
+
+
 //checking quotas
 var perEnv = "environment.maxnodescount",
       maxEnvs = "environment.maxcount",
