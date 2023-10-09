@@ -14,6 +14,7 @@ var perEnv = "environment.maxnodescount",
       perNodeGroup = "environment.maxsamenodescount",
       maxCloudletsPerRec = "environment.maxcloudletsperrec";
       VDSEnabled = "environment.vds.enabled";
+      ExternalIP = "environment.externalip.maxcount";
 var nodesPerEnvWO_Bl = 9,
       nodesPerEnvWO_GlusterFS = 7,
       nodesPerEnvMin = 6,
@@ -55,7 +56,7 @@ if (quotas.VDSEnabled  == false){
   fields["displayfield"].height = 25;
 }
 
-if (!prod || group.groupType == 'trial') {
+if (!prod || quotas.ExternalIP > 1) {
   fields["ippublic"].disabled = true;
   fields["ippublic"].value = false;
 
