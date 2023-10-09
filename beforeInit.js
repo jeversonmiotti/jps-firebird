@@ -52,7 +52,7 @@ if (quotas.VDSEnabled == false){
   );
 }
 
-if (!prod) {
+if (!prod || group.groupType == 'trial') {
   fields["ippublic"].disabled = true;
   fields["ippublic"].value = false;
 
