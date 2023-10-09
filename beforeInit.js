@@ -60,7 +60,7 @@ if (quotas.VDSEnabled == false){
   );
 }
 
-if (!prod || quotas.ExternalIP <= '0') {
+if (quotas.ExternalIP <= '0') {
   fields["ippublic"].disabled = true;
   fields["ippublic"].value = false;
 
