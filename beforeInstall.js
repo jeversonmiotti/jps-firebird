@@ -26,7 +26,7 @@ if ('${settings.storagebackup:false}'== 'true') {
       "/opt/firebird",
       "/opt/firebird/logs",
       "/opt/firebird/data",
-      "/backup/"
+      "/backup"
     ]
   })
 } else {
@@ -49,7 +49,7 @@ if ('${settings.storagebackup:false}'== 'true') {
       "/opt/firebird",
       "/opt/firebird/logs",
       "/opt/firebird/data",
-      "/backup/"
+      "/backup"
     ]
   })
 }
@@ -71,7 +71,7 @@ else {//no storage
         "/opt/firebird",
         "/opt/firebird/logs",
         "/opt/firebird/data",
-        "/backup/"
+        "/backup"
       ]
     })
   } else {
@@ -88,7 +88,7 @@ else {//no storage
         "/opt/firebird",
         "/opt/firebird/logs",
         "/opt/firebird/data",
-        "/backup/"
+        "/backup"
       ]
     })
   }

@@ -189,6 +189,8 @@ actions:
         service firebird-superserver restart
         /opt/firebird/bin/gsec -user SYSDBA -password masterkey -modify sysdba -pw ${globals.DB_PASS}
         service firebird-superserver restart
+    - restartNode:
+      nodeType: buntu-vps           
   
   configFIREBIRD4:
     - cmd[cp]: |-
@@ -201,6 +203,9 @@ actions:
         service firebird restart
         /opt/firebird/bin/gsec -user SYSDBA -password masterkey -modify sysdba -pw ${globals.DB_PASS}
         service firebird restart
+    - restartNode:
+      nodeType: buntu-vps   
+
   configFIREBIRD5:
     - cmd[cp]: |-
         sed -i 's/mesg n || true/ /g' /root/.profile
@@ -212,7 +217,7 @@ actions:
         service firebird restart
         /opt/firebird/bin/gsec -user SYSDBA -password masterkey -modify sysdba -pw ${globals.DB_PASS}
         service firebird restart
- - restartNode:
+    - restartNode:
       nodeType: buntu-vps         
 
 success:
