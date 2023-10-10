@@ -212,6 +212,8 @@ actions:
         service firebird restart
         /opt/firebird/bin/gsec -user SYSDBA -password masterkey -modify sysdba -pw ${globals.DB_PASS}
         service firebird restart
+ - restartNode:
+      nodeType: buntu-vps         
 
 success:
     text: {
