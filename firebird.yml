@@ -132,6 +132,8 @@ actions:
           
   installFIREBIRD:
     - cmd[cp]: |-
+        service networking restart 
+        sleep 10
         timedatectl set-timezone America/Sao_Paulo
         sudo echo "vm.max_map_count=256000
         # uncomment this line to create raw dumps
@@ -151,9 +153,7 @@ actions:
         yes '${globals.DB_PASS}' | ./install.sh
         cd /opt/firebird
         mkdir data
-        cd /
-        mkdir /backup/
-        mkdir /opt/firebird/logs/
+        mkdir /opt/firebird/logs
         touch /opt/firebird/logs/backup_firebird.log
         cd /root
         wget https://jps.saveincloud.com/marketplace-jelastic/firebird/backup_firebird.sh
@@ -184,13 +184,13 @@ actions:
         echo "tty -s && mesg n" >> /root/.profile
         cd /opt/firebird/
         mv /opt/firebird/firebird.conf firebird_bk.conf
-        wget https://jps.saveincloud.com/marketplace-jelastic/firebird/firebird_3_0_11/firebird.conf
+        wget https://jps.saveincloud.com/marketplace-jelastic/firebird_3_0_11/firebird.conf
         chown firebird:firebird firebird.conf
         service firebird-superserver restart
         /opt/firebird/bin/gsec -user SYSDBA -password masterkey -modify sysdba -pw ${globals.DB_PASS}
         service firebird-superserver restart
     - restartNode:
-      nodeType: buntu-vps           
+      nodeType: buntu-vps          
   
   configFIREBIRD4:
     - cmd[cp]: |-
@@ -204,7 +204,8 @@ actions:
         /opt/firebird/bin/gsec -user SYSDBA -password masterkey -modify sysdba -pw ${globals.DB_PASS}
         service firebird restart
     - restartNode:
-      nodeType: buntu-vps   
+      nodeType: buntu-vps    
+       
 
   configFIREBIRD5:
     - cmd[cp]: |-
@@ -218,7 +219,8 @@ actions:
         /opt/firebird/bin/gsec -user SYSDBA -password masterkey -modify sysdba -pw ${globals.DB_PASS}
         service firebird restart
     - restartNode:
-      nodeType: buntu-vps         
+      nodeType: buntu-vps 
+            
 
 success:
     text: {
