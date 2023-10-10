@@ -33,12 +33,12 @@ settings:
           https://jps.saveincloud.com/marketplace-jelastic/firebird/firebird_2_0/firebird.tar.gz: Firebird 2.0.7
           https://jps.saveincloud.com/marketplace-jelastic/firebird/firebird_2_1/firebird.tar.gz: Firebird 2.1.7
           https://jps.saveincloud.com/marketplace-jelastic/firebird/firebird_2_5/firebird.tar.gz: Firebird 2.5.9
-          https://jps.saveincloud.com/marketplace-jelastic/firebird/firebird_3_0_7/firebird.tar.gz: Firebird 3.0.7
-          https://jps.saveincloud.com/marketplace-jelastic/firebird/firebird_4_0/firebird.tar.gz: Firebird 4.0.1
+          https://jps.saveincloud.com/marketplace-jelastic/firebird/firebird_3_0_11/firebird.tar.gz: Firebird 3.0.11
+          https://jps.saveincloud.com/marketplace-jelastic/firebird/firebird_4_0_3/firebird.tar.gz: Firebird 4.0.3
           https://jps.saveincloud.com/marketplace-jelastic/firebird/firebird_5_0/firebird.tar.gz: Firebird 5.0.0.973-Beta1 (NÃO RECOMENDADO EM PRODUÇÃO)
 
       
-      default: https://jps.saveincloud.com/marketplace-jelastic/firebird/firebird_2_5/firebird.tar.gz
+      default: https://jps.saveincloud.com/marketplace-jelastic/firebird/firebird_3_0_11/firebird.tar.gz
       required: true
 
     - name: ubuntu_version
@@ -153,8 +153,8 @@ actions:
         mkdir data
         cd /
         mkdir /backup/
-        mkdir /opt/firebird/data/log/
-        touch /opt/firebird/data/log/backup_firebird.log
+        mkdir /opt/firebird/logs/
+        touch /opt/firebird/logs/backup_firebird.log
         cd /root
         wget https://jps.saveincloud.com/marketplace-jelastic/firebird/backup_firebird.sh
         chmod +x backup_firebird.sh
@@ -184,7 +184,7 @@ actions:
         echo "tty -s && mesg n" >> /root/.profile
         cd /opt/firebird/
         mv /opt/firebird/firebird.conf firebird_bk.conf
-        wget https://jps.saveincloud.com/marketplace-jelastic/firebird/firebird_3_0/firebird.conf
+        wget https://jps.saveincloud.com/marketplace-jelastic/firebird/firebird_3_0_11/firebird.conf
         chown firebird:firebird firebird.conf
         service firebird-superserver restart
         /opt/firebird/bin/gsec -user SYSDBA -password masterkey -modify sysdba -pw ${globals.DB_PASS}
@@ -198,7 +198,7 @@ actions:
         echo "tty -s && mesg n" >> /root/.profile
         cd /opt/firebird/
         mv /opt/firebird/firebird.conf firebird_bk.conf
-        wget https://jps.saveincloud.com/marketplace-jelastic/firebird/firebird_4_0/firebird.conf
+        wget https://jps.saveincloud.com/marketplace-jelastic/firebird/firebird_4_0_3/firebird.conf
         chown firebird:firebird firebird.conf
         service firebird restart
         /opt/firebird/bin/gsec -user SYSDBA -password masterkey -modify sysdba -pw ${globals.DB_PASS}
