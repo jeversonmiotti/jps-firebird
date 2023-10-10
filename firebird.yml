@@ -1,6 +1,6 @@
 ---
 jpsType: install
-jpsVersion: '1.5'
+jpsVersion: '1.9'
 appVersion: latest
 id: firebird
 name: Firebird Database
@@ -24,9 +24,11 @@ description:
 
 settings:
   fields:
-    - type: list
-      defaultMargins: 0 10 0 0
-      name: firebird_version
+    - name: firebird_version
+      caption: {en: "Firebird version",pt: "Versão do Firebird",es: "Versión de Firebird",}
+      type: list
+      disabled: false
+      defaultMargins: 0 10 0 0      
       values:
           https://jps.saveincloud.com/marketplace-jelastic/firebird/firebird_2_0/firebird.tar.gz: Firebird 2.0.7
           https://jps.saveincloud.com/marketplace-jelastic/firebird/firebird_2_1/firebird.tar.gz: Firebird 2.1.7
@@ -35,71 +37,50 @@ settings:
           https://jps.saveincloud.com/marketplace-jelastic/firebird/firebird_4_0/firebird.tar.gz: Firebird 4.0.1
           https://jps.saveincloud.com/marketplace-jelastic/firebird/firebird_5_0/firebird.tar.gz: Firebird 5.0.0.973-Beta1 (NÃO RECOMENDADO EM PRODUÇÃO)
 
-      caption: {
-            en: "Firebird version",
-            pt: "Versão do Firebird",
-            es: "Versión de Firebird",
-        }
+      
       default: https://jps.saveincloud.com/marketplace-jelastic/firebird/firebird_2_5/firebird.tar.gz
       required: true
-      
-  
-    - type: list
-      name: ubuntu_version
+
+    - name: ubuntu_version
+      type: list      
       defaultMargins: 0 10 0 0
       width: 155
       values:
           18.04: Ubuntu 18.04
           20.04: Ubuntu 20.04
           22.04: Ubuntu 22.04
-      caption: {
-            en: "Ubuntu version",
-            pt: "Versão do Ubuntu",
-            es: "Versión de Ubuntu",
-        }
+      caption: {en: "Ubuntu version",pt: "Versão do Ubuntu",es: "Versión de Ubuntu",}
       default: 22.04
       required: true
-      
+
     - type: compositefield
       caption: Storage Backup
       pack: start
-      items:
-      - type: checkbox
-        name: storagebackup
+      items: 
+      - name: storagebackup
+        type: checkbox        
         defaultMargins: 0 10 0 0
         width: 155
         value: false
         disabled: false
-        caption: {
-              en: "Storage Backup",
-              pt: "Storage Backup",
-              es: "Storage Backup",
-          }
+        caption: { en: "Storage Backup", pt: "Storage Backup", es: "Storage Backup",}
         tooltip: Será provisionada uma instância destinada ao armazenamento dos backups dos bancos de dados, caracterizada por um custo de armazenamento diferenciado. Para esclarecimentos adicionais, favor entrar em contato conosco. <a href='https://saveincloud.com/pt/blog/banco-de-dados/como-configurar-dos-bancos-de-dados-firebird/' target='_blank'>Como configurar backup dos bancos de dados Firebird</a> 
-        default: false
-    - caption: Advanced Features
+         
+    - caption: Avançado
+      defaultMargins: 20 20 0 0
       type: displayfield
       name: displayfield
-      markup:
-
-    - type: compositefield
-      caption: IP Público
-      pack: start
-      items:
-      - type: checkbox
-        name: ippublic
-        defaultMargins: 0 10 0 0
-        width: 155
-        value: true
-        disabled: false
-        caption: {
-              en: "Public IP",
-              pt: "IP Público",
-              es: "IP Público",
-          }
-        tooltip: O ambiente será configurado com um endereço <strong>IP público</strong>, visando otimizar a capacidade de consulta e desempenho do seu banco de dados. Para estabelecer uma conexão, utilize a porta <strong>3050</strong> para o Firebird e a porta <strong>21</strong> para o FTP.
-        default: false 
-   
+      markup: 
+          
+    - name: ippublic
+      type: checkbox        
+      defaultMargins: 0 10 0 0
+      width: 155
+      value: true
+      disabled: false
+      caption: {en: "Public IP",pt: "IP Público",es: "IP Público",}
+      tooltip: O ambiente será configurado com um endereço <strong>IP público</strong>, visando otimizar a capacidade de consulta e desempenho do seu banco de dados. Para estabelecer uma conexão, utilize a porta <strong>3050</strong> para o Firebird e a porta <strong>21</strong> para o FTP.
+      
     - type: displayfield
       hideLabel: true
       hidden: true
@@ -112,19 +93,12 @@ onBeforeInstall: https://raw.githubusercontent.com/jeversonmiotti/jps-firebird/m
 
 skipNodeEmails: true
 nodes: definedInOnBeforeInstall
-
-   
  
-  
 globals:
     DB_PASS: ${fn.password(20)}
     USER_FTP: ftp-user
-    PASS_FTP: ${fn.password(20)}
-    
-
-    
-
-         
+    PASS_FTP: ${fn.password(20)}  
+        
 onInstall:
   - if ('${settings.storagebackup:false}' == 'true'): storageMount
   - environment.control.AddEndpoint [${nodes.cp[0].id}]:
@@ -183,7 +157,7 @@ actions:
         touch /opt/firebird/data/log/backup_firebird.log
         cd /root
         wget https://jps.saveincloud.com/marketplace-jelastic/firebird/backup_firebird.sh
-        chmod 755 backup_firebird.sh        
+        chmod +x backup_firebird.sh
         (crontab -l; echo "* * * * * chmod -R 770 /opt/firebird/data/") | crontab -
         (crontab -l; echo "#0 1 * * * /root/backup_firebird.sh USUARIO SENHA BANCO DIAS") | crontab -
     

@@ -51,19 +51,13 @@ if (quotas.VDSEnabled == false){
     {"type": "compositefield","height": 0,"hideLabel": true,"width": 0,"items": [{"height": 0,"type": "string","required": true}]}
   );
 }
-
 if (!prod || group.groupType == 'trial') {
   fields["ippublic"].disabled = true;
   fields["ippublic"].value = false;
-
   fields["displayfield"].markup = "IP Público Não está disponível para sua conta. Atualize sua conta para obter mais recursos.";
   fields["displayfield"].cls = "warning";
   fields["displayfield"].hideLabel = true;
   fields["displayfield"].height = 25;
-
-  
-  
-  
 }
 
 return {
