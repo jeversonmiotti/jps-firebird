@@ -18,7 +18,6 @@ if ('${settings.storagebackup:false}'== 'true') {
   cloudlets: 4,
   nodeGroup: "cp",
   extip: true,
-  success: publicip,
   isSLBAccessEnabled: false,
     env: {
       JELASTIC_PORTS: "3050, 21"      
@@ -42,7 +41,6 @@ if ('${settings.storagebackup:false}'== 'true') {
   tag: ${settings.ubuntu_version},  
   fixedCloudlets: 1,
   cloudlets: 4,
-  success: nopublicip,
   nodeGroup: "cp",
     env: {
       JELASTIC_PORTS: "3050, 21"      
@@ -65,7 +63,6 @@ else {//no storage
     cloudlets: 4,
     nodeGroup: "cp",
     extip: true,
-    success: publicip,
     isSLBAccessEnabled: false,
       env: {
         JELASTIC_PORTS: "3050, 21"      
@@ -83,7 +80,6 @@ else {//no storage
     tag: ${settings.ubuntu_version},  
     fixedCloudlets: 1,
     cloudlets: 4,
-    success: nopublicip,
     nodeGroup: "cp",
       env: {
         JELASTIC_PORTS: "3050, 21"      
