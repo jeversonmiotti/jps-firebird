@@ -117,6 +117,12 @@ onInstall:
       configFIREBIRD4:
   - if (/5_0/.test("${settings.firebird_version}")):
       configFIREBIRD5:
+  
+  - AddFavoritefirebirdbackup:
+  - AddFavoritefirebirdlogs:
+  - AddFavoritefirebirddata:
+  - AddFavoritefirebird:
+  
 actions:
   storageMount:
     - log: Mount Storage
@@ -129,6 +135,43 @@ actions:
           path: /backup
           sourceAddressType: NODE_GROUP
           protocol: NFS4 
+
+  AddFavoritefirebird:
+    - log: AddFavoritefirebird
+    - api:
+      - method: jelastic.environment.file.AddFavorite
+        params:
+          nodeGroup: cp
+          sourceNodeId: ${nodes.app.master.id}
+          path: /opt/firebird
+
+  AddFavoritefirebirddata:
+    - log: AddFavoritefirebirddata
+    - api:
+      - method: jelastic.environment.file.AddFavorite
+        params:
+          nodeGroup: cp
+          sourceNodeId: ${nodes.app.master.id}
+          path: /opt/firebird/data
+
+  AddFavoritefirebirdlogs:
+    - log: AddFavoritefirebirdlogs
+    - api:
+      - method: jelastic.environment.file.AddFavorite
+        params:
+          nodeGroup: cp
+          sourceNodeId: ${nodes.app.master.id}
+          path: /opt/firebird/logs
+
+  AddFavoritefirebirdbackup:
+    - log: AddFavoritefirebirdbackup
+    - api:
+      - method: jelastic.environment.file.AddFavorite
+        params:
+          nodeGroup: cp
+          sourceNodeId: ${nodes.app.master.id}
+          path: /backup
+           
           
   installFIREBIRD:
     - cmd[cp]: |-
@@ -190,7 +233,7 @@ actions:
         /opt/firebird/bin/gsec -user SYSDBA -password masterkey -modify sysdba -pw ${globals.DB_PASS}
         service firebird-superserver restart
     - restartNode:
-      nodeType: buntu-vps          
+      nodeType: ubuntu-vps
   
   configFIREBIRD4:
     - cmd[cp]: |-
@@ -204,7 +247,7 @@ actions:
         /opt/firebird/bin/gsec -user SYSDBA -password masterkey -modify sysdba -pw ${globals.DB_PASS}
         service firebird restart
     - restartNode:
-      nodeType: buntu-vps    
+      nodeType: ubuntu-vps
        
 
   configFIREBIRD5:
@@ -219,7 +262,7 @@ actions:
         /opt/firebird/bin/gsec -user SYSDBA -password masterkey -modify sysdba -pw ${globals.DB_PASS}
         service firebird restart
     - restartNode:
-      nodeType: buntu-vps 
+      nodeType: ubuntu-vps
             
 
 success:
