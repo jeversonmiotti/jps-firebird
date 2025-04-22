@@ -9,7 +9,7 @@ if('${settings.storagebackup:false}'== 'true'){
     nodeGroup: "storage",    
     fixedCloudlets: 1,
     cloudlets: 4,
-    iskLimit: 20
+    DiskLimit: 20
   });
 }
 
